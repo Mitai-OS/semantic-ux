@@ -1,0 +1,56 @@
+# SPDX-FileCopyrightText: 2014 Vishesh Handa <vhanda@kde.org>
+# SPDX-License-Identifier: LGPL-2.1-or-later
+[Desktop Entry]
+Name=Image Gallery
+Name[ar]=معرض الصور
+Name[bg]=Галерия с изображения
+Name[bs]=Galerija slika
+Name[ca]=Galeria d'imatges
+Name[ca@valencia]=Galeria d'imatges
+Name[cs]=Galerie obrázků
+Name[da]=Billedgalleri
+Name[de]=Bildergalerie
+Name[el]=Συλλογή εικόνων
+Name[en_GB]=Image Gallery
+Name[eo]=Bildgalerio
+Name[es]=Galería de imágenes
+Name[et]=Pildigalerii
+Name[eu]=Irudi-galeria
+Name[fi]=Kuvagalleria
+Name[fr]=Galerie d'images
+Name[gl]=Galería de imaxes
+Name[hu]=Image Gallery
+Name[ia]=Galeria de imagine
+Name[it]=Galleria di immagini
+Name[ka]=სურათების გალერეა
+Name[ko]=이미지 갤러리
+Name[nl]=Afbeeldingsgalerij
+Name[nn]=Biletgalleri
+Name[pa]=ਚਿੱਤਰ ਗੈਲਰੀ
+Name[pl]=Galeria obrazów
+Name[pt]=Galeria de Imagens
+Name[pt_BR]=Galeria de imagens
+Name[ro]=Galerie de imagini
+Name[ru]=Галерея изображений
+Name[sk]=Galéria obrázkov
+Name[sl]=Galerija slik
+Name[sv]=Bildgalleri
+Name[tr]=Görsel Galerisi
+Name[uk]=Галерея зображень
+Name[x-test]=xxImage Galleryxx
+Name[zh_CN]=图像库
+Name[zh_TW]=圖片相簿
+Keywords=Picture;Slideshow;Graphics;Gallery;
+Exec=koko %U
+Terminal=false
+Type=Application
+Categories=Utility;
+Icon=koko
+MimeType=image/gif;image/jpeg;image/png;image/bmp;image/x-eps;image/x-ico;image/x-portable-bitmap;image/x-portable-graymap;image/x-portable-pixmap;image/x-xbitmap;image/x-xpixmap;image/tiff;image/x-psd;image/x-webp;image/webp;image/svg+xml;video/x-matroska;video/x-vp8;video/x-vp9;video/webm;video/x-h264;video/mp4;video/x-m4v;video/x-av1;video/mpeg;video/mpegts;video/x-dirac;video/x-flash-video;video/flv;video/x-flv;video/x-h263;video/x-msvideocodec;video/x-msvideo;video/quicktime;video/3gpp;video/x-ms-asf;video/x-theora;video/ogg;video/x-vp10;video/x-mkv;video/x-fli;video/x-divx;video/x-msmpeg;video/x-jpeg;video/x-svq;video/x-pn-realvideo;video/x-dv;video/x-wmv;video/x-xvid;video/x-3ivx;video/x-tarkin;video/x-vp3;video/x-huffyuv;video/x-ffv;video/x-indeo;video/x-png;video/x-cinepak;
+X-Purism-FormFactor=Workstation;Mobile;
+# InitialPreference should be greater than Okular so that Koko is the
+# primary application associated with images, but less than Konqueror or Dolphin
+# so that Koko is not the primary applications for folders.
+# This is intionally the same value Gwenview uses as Koko is about en par.
+InitialPreference=8
+X-KDE-Shortcuts=Meta+G
