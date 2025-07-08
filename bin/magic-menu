@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # Script /usr/bin/magic-menu para o KDE Plasma
 
-
 RPAD="             "
 
 if [ -z "${XDG_DATA_HOME}" ]; then
@@ -37,27 +36,22 @@ xdg-mime default magic-menu.desktop application/x-magic-menu
 
 PID=""
 
-function update-desktops {
+function update-group-desktop {
     shopt -s nullglob
-    for applications_dir in "${1}"/*/; do
-        name=$(basename "${applications_dir}")
-        icon=$(grep "^Icon=" "${applications_dir}/.directory" | cut -d\= -f2)
-        desktop=$(echo -n "${name}" | tr '[:space:]' '_')
-        applications_path="${applications_dir}/Aplicativos"
+    local applications_group_path="${1}"
 
-        mimetypes=$(grep "MimeType=" "${applications_dir}/Aplicativos"/* | cut -d\= -f2 | tr ';' '\n' | sort -u | tr '\n' ';' | sed 's|^;||g')
-        categories=$(grep "Categories=" "${applications_dir}/Aplicativos"/* | cut -d\= -f2 | tr ';' '\n' | sort -u | tr '\n' ';' | sed 's|^;||g')
+    name=$(basename "${applications_group_path}")
+    icon=$(grep "^Icon=" "${applications_group_path}/.directory" | cut -d\= -f2)
+    desktop=$(echo -n "${name}" | tr '[:space:]' '_')
+    mimetypes=$(grep "MimeType=" "${applications_group_path}/Aplicativos"/* | cut -d\= -f2 | tr ';' '\n' | sort -u | tr '\n' ';' | sed 's|^;||g')
+    categories=$(grep "Categories=" "${applications_group_path}/Aplicativos"/* | cut -d\= -f2 | tr ';' '\n' | sort -u | tr '\n' ';' | sed 's|^;||g')
 
-        for launcher in "${applications_dir}/Aplicativos"/*; do
-            template_name=$(basename -s .desktop "${launcher}")
-            icon=$(grep -A9999 "\[\]" "${launcher}" | grep -m1 "Icon=" | cut -d\= -f2)
-            mkdir -p "${applications_dir}/Modelos/${template_name}"
-            (
-                echo "[Desktop Entry]"
-                echo "Name=${name}"
-                echo "Icon=${icon}"
-            ) > "${applications_dir}/Modelos/${template_name}/.directory"
-        done
+    desktop_file="${XDG_DATA_HOME}/applications/magic-menu-${desktop}.desktop"
+    if [ ! -f "${desktop_file}" ] || \
+       ! grep -q "^Icon=${icon}$" "${desktop_file}" || \
+       ! grep -q "^MimeType=${mimetypes}$" "${desktop_file}" || \
+       ! grep -q "^Categories=${categories}$" "${desktop_file}"; then
+
         (
             echo "[Desktop Entry]"
             echo "Name=${name}"
@@ -67,7 +61,31 @@ function update-desktops {
             echo "MimeType=${mimetypes}"
             echo "Categories=${categories}"
             echo "X-Magic-Menu-Data-Directory=${name}"
-        ) > "${XDG_DATA_HOME}/applications/magic-menu-${desktop}.desktop"
+        ) > "${desktop_file}"
+    fi
+
+
+    for launcher in "${applications_group_path}/Aplicativos"/*.desktop; do
+        template_name=$(basename -s .desktop "${launcher}")
+        if [ ! -f "${applications_group_path}/Modelos/${template_name}/.directory" ]; then
+            icon=$(grep -A9999 "\[\]" "${launcher}" | grep -m1 "Icon=" | cut -d\= -f2)
+
+            mkdir -p "${applications_group_path}/Modelos/${template_name}"
+            (
+                echo "[Desktop Entry]"
+                echo "Icon=${icon}"
+            ) > "${applications_group_path}/Modelos/${template_name}/.directory"
+        fi
+    done
+    shopt -u nullglob
+}
+
+function update-groups-desktops {
+    shopt -s nullglob
+    for applications_group_dir in "${HOME}/Menu de aplicativos/Agrupar"/*; do
+        if [ -d "${applications_group_dir}" ]; then
+            update-group-desktop "${applications_group_dir}"
+        fi
     done
     shopt -u nullglob
 }
@@ -182,4 +200,11 @@ if [ -f "${1}" ]; then
 fi
 
 create-structure
+update-groups-desktops
+sanitize-applications-database
 
+# Entra em modo monitor
+while inotifywait -r -e create,delete "${HOME}/Menu de aplicativos/Agrupar"; do
+    update-groups-desktops
+    sanitize-applications-database
+done
