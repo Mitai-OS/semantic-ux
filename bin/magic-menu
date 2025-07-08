@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Script /usr/bin/magic-menu
+# Script /usr/bin/magic-menu para o KDE Plasma
 
 
 RPAD="             "
@@ -56,13 +56,31 @@ function update-desktops {
                 echo "[Desktop Entry]"
                 echo "Name=${name}"
                 echo "Icon=${icon}"
-                echo "Exec=magic-menu-player ${desktop} %f"
-                echo "Type=Application"
-                echo "MimeType=${mimetypes}"
-                echo "Categories=${categories}"
-                echo "X-Data-Directory=${name}"
             ) > "${applications_dir}/Modelos/${template_name}/.directory"
         done
+        (
+            echo "[Desktop Entry]"
+            echo "Name=${name}"
+            echo "Icon=${icon}"
+            echo "Exec=magic-menu-player ${desktop} %f"
+            echo "Type=Application"
+            echo "MimeType=${mimetypes}"
+            echo "Categories=${categories}"
+            echo "X-Magic-Menu-Data-Directory=${name}"
+        ) > "${XDG_DATA_HOME}/applications/magic-menu-${desktop}.desktop"
+    done
+    shopt -u nullglob
+}
+
+function sanitize-applications-database {
+    shopt -s nullglob
+    for application in "${XDG_DATA_HOME}/applications"/magic-menu-*.desktop; do
+        grep -q "X-Magic-Menu-Data-Directory" "${application}" && {
+            group_directory=$(grep "X-Magic-Menu-Data-Directory" "${application}" | cut -d= -f2);
+            if [ ! -d "${group_directory}" ]; then
+              rm "${application}"
+            fi
+        }
     done
     shopt -u nullglob
 }
@@ -125,8 +143,8 @@ Name=${name}
 Exec=/usr/bin/magic-menu-player ${desktop} %f
 Icon=${icon}
 Type=Application
-X-Data-Directory="${name}"
-" > "${XDG_DATA_HOME}/applications/magic-${desktop}.desktop"
+X-Magic-Menu-Data-Directory="${name}"
+" > "${XDG_DATA_HOME}/applications/magic-menu-${desktop}.desktop"
 }
 
 function create-structure {
@@ -165,7 +183,3 @@ fi
 
 create-structure
 
-while true; do
-  update-desktops
-  sleep 1
-done
